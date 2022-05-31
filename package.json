@@ -1,8 +1,8 @@
 {
-  "name": "howler",
-  "version": "0.2.2.3",
-  "description": "Javascript audio library for the modern web.",
-  "homepage": "https://howlerjs.com",
+  "name": "loudest",
+  "version": "0.2.2",
+  "description": "Javascript audio library for the modern web, fork of Howlerjs.",
+  "homepage": "-",
   "keywords": [
     "howler",
     "howler.js",
