@@ -63,8 +63,8 @@
 
     /**
      * Get/set the global volume for all sounds.
-     * @param  {Float} vol Volume from 0.0 to 1.0.
-     * @return {Howler/Float}     Returns self or current volume.
+     * @param {Number} [vol] - Volume from 0.0 to 1.0.
+     * @return {Howler|Number} - Returns self or current volume.
      */
     volume: function(vol) {
       var self = this || Howler;
@@ -113,7 +113,8 @@
 
     /**
      * Handle muting and unmuting globally.
-     * @param  {Boolean} muted Is muted or not.
+     * @param {Boolean} muted - Is muted or not.
+     * @return {Howler}
      */
     mute: function(muted) {
       var self = this || Howler;
@@ -152,6 +153,7 @@
 
     /**
      * Handle stopping all sounds globally.
+     * @return {Howler}
      */
     stop: function() {
       var self = this || Howler;
@@ -303,7 +305,7 @@
      * Some browsers/devices will only allow audio to be played after a user interaction.
      * Attempt to automatically unlock audio on the first user interaction.
      * Concept from: http://paulbakaus.com/tutorials/html5/web-audio-on-ios/
-     * @return {Howler}
+     * @return {Howler|undefined}
      */
     _unlockAudio: function() {
       var self = this || Howler;
@@ -322,6 +324,11 @@
       if (!self._mobileUnloaded && self.ctx.sampleRate !== 44100) {
         self._mobileUnloaded = true;
         self.unload();
+        
+        // In some cases, the unload method results in a null context
+        if (!self.ctx) {
+          return;
+        }
       }
 
       // Scratch buffer for enabling iOS to dispose of web audio buffers correctly, as per:
@@ -424,7 +431,7 @@
     /**
      * Get an unlocked HTML5 Audio object from the pool. If none are left,
      * return a new Audio object and throw a warning.
-     * @return {Audio} HTML5 Audio object.
+     * @return {Audio} - HTML5 Audio object.
      */
     _obtainHtml5Audio: function() {
       var self = this || Howler;
@@ -463,7 +470,7 @@
     /**
      * Automatically suspend the Web Audio AudioContext after no sound has played for 30 seconds.
      * This saves processing/energy and fixes various browser-specific bugs with audio getting stuck.
-     * @return {Howler}
+     * @return {Howler|undefined}
      */
     _autoSuspend: function() {
       var self = this;
@@ -516,7 +523,7 @@
 
     /**
      * Automatically resume the Web Audio AudioContext when a new sound is played.
-     * @return {Howler}
+     * @return {Howler|undefined}
      */
     _autoResume: function() {
       var self = this;
@@ -528,7 +535,7 @@
       if (self.state === 'running' && self.ctx.state !== 'interrupted' && self._suspendTimer) {
         clearTimeout(self._suspendTimer);
         self._suspendTimer = null;
-      } else if (self.state === 'suspended' || self.state === 'running' && self.ctx.state === 'interrupted') {
+      } else if (self.state === 'suspended' || self.state === 'running' && (self.ctx.state === 'interrupted' || self.ctx.state === 'suspended')) {
         self.ctx.resume().then(function() {
           self.state = 'running';
 
@@ -558,7 +565,7 @@
 
   /**
    * Create an audio group controller.
-   * @param {Object} o Passed in properties for this group.
+   * @param {Object} o - Passed in properties for this group.
    */
   var Howl = function(o) {
     var self = this;
@@ -574,7 +581,7 @@
   Howl.prototype = {
     /**
      * Initialize a new Howl group object.
-     * @param  {Object} o Passed in properties for this group.
+     * @param {Object} o - Passed in properties for this group.
      * @return {Howl}
      */
     init: function(o) {
@@ -658,7 +665,7 @@
 
     /**
      * Load the audio file.
-     * @return {Howler}
+     * @return {Howler|undefined}
      */
     load: function() {
       var self = this;
@@ -741,9 +748,9 @@
 
     /**
      * Play a sound or resume previous playback.
-     * @param  {String/Number} sprite   Sprite name for sprite playback or sound id to continue previous.
-     * @param  {Boolean} internal Internal Use: true prevents event firing.
-     * @return {Number}          Sound ID.
+     * @param {String|Number} [sprite] - Sprite name for sprite playback or sound id to continue previous.
+     * @param {Boolean} [internal] - Internal Use: true prevents event firing.
+     * @return {Number} - Sound ID.
      */
     play: function(sprite, internal) {
       var self = this;
@@ -853,7 +860,7 @@
       // End the sound instantly if seek is at the end.
       if (seek >= stop) {
         self._ended(sound);
-        return;
+        return sound._id;
       }
 
       // Begin the actual playback.
@@ -981,7 +988,7 @@
           node.load();
         }
 
-        // Play immediately if ready, or wait for the 'canplaythrough'e vent.
+        // Play immediately if ready, or wait for the 'canplaythrough' vent.
         var loadedNoReadyState = (window && window.ejecta) || (!node.readyState && Howler._navigator.isCocoonJS);
         if (node.readyState >= 3 || loadedNoReadyState) {
           playHtml5();
@@ -1010,10 +1017,11 @@
 
     /**
      * Pause playback and save current position.
-     * @param  {Number} id The sound ID (empty to pause all in group).
+     * @param {Number} id - The sound ID (empty to pause all in group).
+     * @param {Boolean} [internal] - Internal Use: true prevents event firing.
      * @return {Howl}
      */
-    pause: function(id) {
+    pause: function(id, internal) {
       var self = this;
 
       // If the sound hasn't loaded or a play() promise is pending, add it to the load queue to pause when capable.
@@ -1069,7 +1077,7 @@
         }
 
         // Fire the pause event, unless `true` is passed as the 2nd argument.
-        if (!arguments[1]) {
+        if (!internal) {
           self._emit('pause', sound ? sound._id : null);
         }
       }
@@ -1079,8 +1087,8 @@
 
     /**
      * Stop playback and reset to start.
-     * @param  {Number} id The sound ID (empty to stop all in group).
-     * @param  {Boolean} internal Internal Use: true prevents event firing.
+     * @param {Number} id - The sound ID (empty to stop all in group).
+     * @param {Boolean} [internal] - Internal Use: true prevents event firing.
      * @return {Howl}
      */
     stop: function(id, internal) {
@@ -1153,8 +1161,8 @@
 
     /**
      * Mute/unmute a single sound or all sounds in this Howl group.
-     * @param  {Boolean} muted Set to true to mute and false to unmute.
-     * @param  {Number} id    The sound ID to update (omit to mute/unmute all).
+     * @param {Boolean} muted - Set to true to mute and false to unmute.
+     * @param {Number} id - The sound ID to update (omit to mute/unmute all).
      * @return {Howl}
      */
     mute: function(muted, id) {
@@ -1215,7 +1223,7 @@
      *   volume(id) -> Returns the sound id's current volume.
      *   volume(vol) -> Sets the volume of all sounds in this Howl group.
      *   volume(vol, id) -> Sets the volume of passed sound id.
-     * @return {Howl/Number} Returns self or current volume.
+     * @return {Howl|Number} - Returns self or current volume.
      */
     volume: function() {
       var self = this;
@@ -1293,10 +1301,10 @@
 
     /**
      * Fade a currently playing sound between two volumes (if no id is passed, all sounds will fade).
-     * @param  {Number} from The value to fade from (0.0 to 1.0).
-     * @param  {Number} to   The volume to fade to (0.0 to 1.0).
-     * @param  {Number} len  Time in milliseconds to fade.
-     * @param  {Number} id   The sound id (omit to fade all sounds).
+     * @param {Number} from - The value to fade from (0.0 to 1.0).
+     * @param {Number} to - The volume to fade to (0.0 to 1.0).
+     * @param {Number} len - Time in milliseconds to fade.
+     * @param {Number} id - The sound id (omit to fade all sounds).
      * @return {Howl}
      */
     fade: function(from, to, len, id) {
@@ -1353,12 +1361,12 @@
 
     /**
      * Starts the internal interval to fade a sound.
-     * @param  {Object} sound Reference to sound to fade.
-     * @param  {Number} from The value to fade from (0.0 to 1.0).
-     * @param  {Number} to   The volume to fade to (0.0 to 1.0).
-     * @param  {Number} len  Time in milliseconds to fade.
-     * @param  {Number} id   The sound id to fade.
-     * @param  {Boolean} isGroup   If true, set the volume on the group.
+     * @param {Object} sound - Reference to sound to fade.
+     * @param {Number} from - The value to fade from (0.0 to 1.0).
+     * @param {Number} to - The volume to fade to (0.0 to 1.0).
+     * @param {Number} len - Time in milliseconds to fade.
+     * @param {Number} id - The sound id to fade.
+     * @param {Boolean} isGroup - If true, set the volume on the group.
      */
     _startFadeInterval: function(sound, from, to, len, id, isGroup) {
       var self = this;
@@ -1414,7 +1422,7 @@
     /**
      * Internal method that stops the currently playing fade when
      * a new fade starts, volume is changed or the sound is stopped.
-     * @param  {Number} id The sound id.
+     * @param {Number} id - The sound id.
      * @return {Howl}
      */
     _stopFade: function(id) {
@@ -1442,7 +1450,7 @@
      *   loop(id) -> Returns the sound id's loop value.
      *   loop(loop) -> Sets the loop value for all sounds in this Howl group.
      *   loop(loop, id) -> Sets the loop value of passed sound id.
-     * @return {Howl/Boolean} Returns self or current loop value.
+     * @return {Howl|Boolean} - Returns self or current loop value.
      */
     loop: function() {
       var self = this;
@@ -1451,7 +1459,7 @@
 
       // Determine the values for loop and id.
       if (args.length === 0) {
-        // Return the grou's loop value.
+        // Return the groups loop value.
         return self._loop;
       } else if (args.length === 1) {
         if (typeof args[0] === 'boolean') {
@@ -1499,7 +1507,7 @@
      *   rate(id) -> Returns the sound id's current playback rate.
      *   rate(rate) -> Sets the playback rate of all sounds in this Howl group.
      *   rate(rate, id) -> Sets the playback rate of passed sound id.
-     * @return {Howl/Number} Returns self or the current playback rate.
+     * @return {Howl|Number} Returns self or the current playback rate.
      */
     rate: function() {
       var self = this;
@@ -1594,7 +1602,7 @@
      *   seek(id) -> Returns the sound id's current seek position.
      *   seek(seek) -> Sets the seek position of the first sound node.
      *   seek(seek, id) -> Sets the seek position of passed sound id.
-     * @return {Howl/Number} Returns self or the current seek position.
+     * @return {Howl|Number} Returns self or the current seek position.
      */
     seek: function() {
       var self = this;
@@ -1699,8 +1707,8 @@
 
     /**
      * Check if a specific sound is currently playing or not (if id is provided), or check if at least one of the sounds in the group is playing or not.
-     * @param  {Number}  id The sound id to check. If none is passed, the whole sound group is checked.
-     * @return {Boolean} True if playing and false if not.
+     * @param {Number} id - The sound id to check. If none is passed, the whole sound group is checked.
+     * @return {Boolean} - True if playing and false if not.
      */
     playing: function(id) {
       var self = this;
@@ -1723,8 +1731,8 @@
 
     /**
      * Get the duration of this sound. Passing a sound id will return the sprite duration.
-     * @param  {Number} id The sound id to check. If none is passed, return full source duration.
-     * @return {Number} Audio duration in seconds.
+     * @param {Number} id - The sound id to check. If none is passed, return full source duration.
+     * @return {Number} - Audio duration in seconds.
      */
     duration: function(id) {
       var self = this;
@@ -1741,7 +1749,7 @@
 
     /**
      * Returns the current loaded state of this Howl.
-     * @return {String} 'unloaded', 'loading', 'loaded'
+     * @return {String} - 'unloaded', 'loading', 'loaded'
      */
     state: function() {
       return this._state;
@@ -1815,10 +1823,10 @@
 
     /**
      * Listen to a custom event.
-     * @param  {String}   event Event name.
-     * @param  {Function} fn    Listener to call.
-     * @param  {Number}   id    (optional) Only listen to events for this sound.
-     * @param  {Number}   once  (INTERNAL) Marks event to fire only once.
+     * @param {String} event - Event name.
+     * @param {Function} fn - Listener to call.
+     * @param {Number} [id] - (optional) Only listen to events for this sound.
+     * @param {Number} [once] - (INTERNAL) Marks event to fire only once.
      * @return {Howl}
      */
     on: function(event, fn, id, once) {
@@ -1834,9 +1842,9 @@
 
     /**
      * Remove a custom event. Call without parameters to remove all events.
-     * @param  {String}   event Event name.
-     * @param  {Function} fn    Listener to remove. Leave empty to remove all.
-     * @param  {Number}   id    (optional) Only remove events for this sound.
+     * @param {String} event - Event name.
+     * @param {Function} fn - Listener to remove. Leave empty to remove all.
+     * @param {Number} [id] - (optional) Only remove events for this sound.
      * @return {Howl}
      */
     off: function(event, fn, id) {
@@ -1877,9 +1885,9 @@
 
     /**
      * Listen to a custom event and remove it once fired.
-     * @param  {String}   event Event name.
-     * @param  {Function} fn    Listener to call.
-     * @param  {Number}   id    (optional) Only listen to events for this sound.
+     * @param {String} event - Event name.
+     * @param {Function} fn - Listener to call.
+     * @param {Number} [id] - (optional) Only listen to events for this sound.
      * @return {Howl}
      */
     once: function(event, fn, id) {
@@ -1893,9 +1901,9 @@
 
     /**
      * Emit all events of a specific type and pass the sound id.
-     * @param  {String} event Event name.
-     * @param  {Number} id    Sound ID.
-     * @param  {Number} msg   Message to go with event.
+     * @param {String} event - Event name.
+     * @param {Number} [id] - Sound ID.
+     * @param {String} [msg] - Message to go with event.
      * @return {Howl}
      */
     _emit: function(event, id, msg) {
@@ -1952,7 +1960,7 @@
 
     /**
      * Fired when playback ends at the end of the duration.
-     * @param  {Sound} sound The sound object to work with.
+     * @param {Sound} sound - The sound object to work with.
      * @return {Howl}
      */
     _ended: function(sound) {
@@ -2014,7 +2022,7 @@
 
     /**
      * Clear the end timer for a sound playback.
-     * @param  {Number} id The sound ID.
+     * @param {Number} id - The sound ID.
      * @return {Howl}
      */
     _clearTimer: function(id) {
@@ -2039,8 +2047,8 @@
 
     /**
      * Return the sound identified by this ID, or return null.
-     * @param  {Number} id Sound ID
-     * @return {Object}    Sound object or null.
+     * @param {Number} id - Sound ID
+     * @return {?Object} Sound object or null.
      */
     _soundById: function(id) {
       var self = this;
@@ -2057,7 +2065,7 @@
 
     /**
      * Return an inactive sound from the pool or create a new one.
-     * @return {Sound} Sound playback object.
+     * @return {Sound} - Sound playback object.
      */
     _inactiveSound: function() {
       var self = this;
@@ -2117,8 +2125,8 @@
 
     /**
      * Get all ID's from the sounds pool.
-     * @param  {Number} id Only return one ID if one is passed.
-     * @return {Array}    Array of IDs.
+     * @param {Number} [id] - Only return one ID if one is passed.
+     * @return {Array} - Array of IDs.
      */
     _getSoundIds: function(id) {
       var self = this;
@@ -2137,7 +2145,7 @@
 
     /**
      * Load the sound back into the buffer source.
-     * @param  {Sound} sound The sound object to work with.
+     * @param {Sound} sound - The sound object to work with.
      * @return {Howl}
      */
     _refreshBuffer: function(sound) {
@@ -2167,7 +2175,7 @@
 
     /**
      * Prevent memory leaks by cleaning up the buffer source after playback.
-     * @param  {Object} node Sound's audio node containing the buffer source.
+     * @param {Object} node - Sound's audio node containing the buffer source.
      * @return {Howl}
      */
     _cleanBuffer: function(node) {
@@ -2192,7 +2200,7 @@
 
     /**
      * Set the source to a 0-second silence to stop any downloading (except in IE).
-     * @param  {Object} node Audio node to clear.
+     * @param {Object} node - Audio node to clear.
      */
     _clearSound: function(node) {
       var checkIE = /MSIE |Trident\//.test(Howler._navigator && Howler._navigator.userAgent);
@@ -2207,7 +2215,7 @@
 
   /**
    * Setup the sound object, which each node attached to a Howl group is contained in.
-   * @param {Object} howl The Howl parent group.
+   * @param {Object} howl - The Howl parent group.
    */
   var Sound = function(howl) {
     this._parent = howl;
@@ -2303,6 +2311,7 @@
       self._rate = parent._rate;
       self._seek = 0;
       self._rateSeek = 0;
+      self._playStart = 0;
       self._paused = true;
       self._ended = true;
       self._sprite = '__default';
@@ -2385,7 +2394,7 @@
 
   /**
    * Buffer a sound from URL, Data URI or cache and decode to audio source (Web Audio API).
-   * @param  {Howl} self
+   * @param {Howl} self
    */
   var loadBuffer = function(self) {
     var url = self._src;
@@ -2450,7 +2459,7 @@
 
   /**
    * Send the XHR request wrapped in a try/catch.
-   * @param  {Object} xhr XHR to send.
+   * @param {Object} xhr - XHR to send.
    */
   var safeXhrSend = function(xhr) {
     try {
@@ -2462,8 +2471,8 @@
 
   /**
    * Decode audio data from an array buffer.
-   * @param  {ArrayBuffer} arraybuffer The audio data.
-   * @param  {Howl}        self
+   * @param {ArrayBuffer} arraybuffer - The audio data.
+   * @param {Howl} self
    */
   var decodeAudioData = function(arraybuffer, self) {
     // Fire a load error if something broke.
@@ -2491,8 +2500,8 @@
 
   /**
    * Sound is now loaded, so finish setting everything up and fire the loaded event.
-   * @param  {Howl} self
-   * @param  {Object} buffer The decoded buffer sound source.
+   * @param {Howl} self
+   * @param {Object} [buffer] - The decoded buffer sound source.
    */
   var loadSound = function(self, buffer) {
     // Set the duration.
