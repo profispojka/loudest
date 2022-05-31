@@ -209,14 +209,12 @@
       // Automatically begin the 30-second suspend process
       self._autoSuspend();
 
-      var test;
-
       // Check if audio is available.
       if (!self.usingWebAudio) {
         // No audio is available on this system if noAudio is set to true.
         if (typeof Audio !== 'undefined') {
           try {
-            test = new Audio();
+            var test = new Audio();
 
             // Check if the canplaythrough event is available.
             if (typeof test.oncanplaythrough === 'undefined') {
@@ -232,7 +230,7 @@
 
       // Test to make sure audio isn't disabled in Internet Explorer.
       try {
-        test = new Audio();
+        var test = new Audio();
         if (test.muted) {
           self.noAudio = true;
         }
