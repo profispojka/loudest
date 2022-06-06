@@ -2267,6 +2267,7 @@
         self._fxSend = (typeof Howler.ctx.createGain === 'undefined') ? Howler.ctx.createGainNode() : Howler.ctx.createGain();
         self._fxInsertIn = (typeof Howler.ctx.createGain === 'undefined') ? Howler.ctx.createGainNode() : Howler.ctx.createGain();
         self._fxInsertOut = (typeof Howler.ctx.createGain === 'undefined') ? Howler.ctx.createGainNode() : Howler.ctx.createGain();
+
         // Connect to the correct node.
         if (self._panner) {
           self._fxInsertOut.connect(self._panner);
