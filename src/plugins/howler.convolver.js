@@ -124,6 +124,11 @@ Example of parallel processing, used for time based effects such as reverb and d
         
           // Setup user-defined default properties.
           self._convolverVolume = o.convolverVolume || 1.0;
+
+          // Setup event listeners.
+          self._onsendToConvolver = o.onsendToConvolver ? [{fn: o.onsendToConvolver}] : [];
+          self._onremoveFromConvolver = o.onremoveFromConvolver ? [{fn: o.onremoveFromConvolver}] : [];
+          self._onconvolverVolume = o.onconvolverVolume ? [{fn: o.onconvolverVolume}] : [];
         
           // Complete initilization with howler.js core's init function.
           return _super.call(this, o);
@@ -171,6 +176,7 @@ Example of parallel processing, used for time based effects such as reverb and d
               sound._convolverSend.connect(Howler._convolvers[convolverName]);
               // set the send level
               sound._convolverSend.gain.setValueAtTime(sendLevel, Howler.ctx.currentTime);
+              self._emit('sendToConvolver', sound._id);
           }
         }
     
@@ -213,6 +219,7 @@ Example of parallel processing, used for time based effects such as reverb and d
               {
                 removeConvolverSend(sound);
               }
+              self._emit('removeFromConvolver', sound._id);
           }
         }
     
@@ -249,7 +256,7 @@ Example of parallel processing, used for time based effects such as reverb and d
         if (sendLevel >= 0 && sendLevel <= 1) {
           if (self._state !== 'loaded') {
             self._queue.push({
-              event: 'setConvolverSendLevel',
+              event: 'convolverVolume',
               action: function() {
                 self.convolverVolume(sendLevel);
               }
@@ -267,6 +274,7 @@ Example of parallel processing, used for time based effects such as reverb and d
                 if (sound._convolverSend && !sound._muted) {
                   sound._convolverSend.gain.setValueAtTime(sendLevel, Howler.ctx.currentTime);
                 }
+                self._emit('convolverVolume', sound._id);
             }
           }
         }
