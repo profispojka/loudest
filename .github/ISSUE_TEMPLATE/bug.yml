@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Need help or support? Please don't open an issue!
-        Head to [Stack Overflow](https://stackoverflow.com/questions/tagged/howler.js) or [Discussions](https://github.com/goldfire/howler.js/discussions).
+        Head to [Stack Overflow](https://stackoverflow.com/questions/tagged/howler.js) or [Discussions](https://github.com/profispojka/loudest.js/discussions).
 
   - type: textarea
     attributes:

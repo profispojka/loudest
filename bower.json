@@ -1,10 +1,10 @@
 {
-  "name": "howler.js",
+  "name": "loudest.js",
   "description": "Javascript audio library for the modern web.",
-  "homepage": "https://howlerjs.com",
+  "homepage": "https://droplex.net/libs/loudest",
   "keywords": [
-    "howler",
-    "howler.js",
+    "loudest",
+    "loudest.js",
     "audio",
     "sound",
     "web audio",
@@ -19,9 +19,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/goldfire/howler.js.git"
+    "url": "git://github.com/profispojka/loudest.js.git"
   },
-  "main": "dist/howler.js",
+  "main": "dist/loudest.js",
   "license": "MIT",
   "moduleType": [
     "amd",

@@ -1,11 +1,9 @@
-[![howler.js](https://s3.amazonaws.com/howler.js/howler-logo.png "howler.js")](https://howlerjs.com)
+[![howler.js](https://s3.amazonaws.com/howler.js/howler-logo.png "loudest")](https://droplex.net/libs/loudest)
 
 # Description
-[howler.js](https://howlerjs.com) is an audio library for the modern web. It defaults to [Web Audio API](http://webaudio.github.io/web-audio-api/) and falls back to [HTML5 Audio](https://html.spec.whatwg.org/multipage/embedded-content.html#the-audio-element). This makes working with audio in JavaScript easy and reliable across all platforms.
+[loudest.js](https://droplex.net/libs/loudest) is an audio library for the modern web. It defaults to [Web Audio API](http://webaudio.github.io/web-audio-api/) and falls back to [HTML5 Audio](https://html.spec.whatwg.org/multipage/embedded-content.html#the-audio-element). This makes working with audio in JavaScript easy and reliable across all platforms.
 
-Additional information, live demos and a user showcase are available at [howlerjs.com](https://howlerjs.com).
-
-Follow on Twitter for howler.js and development-related discussion: [@GoldFireStudios](https://twitter.com/goldfirestudios).
+Additional information, live demos and a user showcase are available at [howlerjs.com](https://droplex.net/libs/loudest).
 
 ### Features
 * Single API for all audio needs
@@ -21,6 +19,7 @@ Follow on Twitter for howler.js and development-related discussion: [@GoldFireSt
 * Modular - use what you want and easy to extend
 * No outside dependencies, just pure JavaScript
 * As light as 7kb gzipped
+* Sound filters like highpass, lowpass and convolution
 
 ### Browser Compatibility
 Tested in the following browsers/versions:
@@ -33,10 +32,11 @@ Tested in the following browsers/versions:
 * Microsoft Edge
 
 ### Live Demos
-* [Audio Player](https://howlerjs.com/#player)
-* [Radio](https://howlerjs.com/#radio)
-* [Spatial Audio](https://howlerjs.com/#spatial)
-* [Audio Sprites](https://howlerjs.com/#sprite)
+* [Audio Player](https://droplex.net/libs/loudest/#player)
+* [Radio](https://droplex.net/libs/loudest/#radio)
+* [Spatial Audio](https://droplex.net/libs/loudest/#spatial)
+* [Audio Sprites](https://droplex.net/libs/loudest/#sprite)
+* [Audio Sprites](https://droplex.net/libs/loudest/#sprite)
 
 # Documentation
 
@@ -63,16 +63,13 @@ Tested in the following browsers/versions:
 
 Several options to get up and running:
 
-* Clone the repo: `git clone https://github.com/goldfire/howler.js.git`
-* Install with [npm](https://www.npmjs.com/package/howler): `npm install howler`
-* Install with [Yarn](https://yarnpkg.com/en/package/howler): `yarn add howler`
-* Install with [Bower](http://bower.io/): `bower install howler`
-* Hosted CDN: [`cdnjs`](https://cdnjs.com/libraries/howler) [`jsDelivr`](https://www.jsdelivr.com/projects/howler.js)
+* Clone the repo: `git clone https://github.com/profispojka/loudest.js.git`
+* Install with [npm](https://www.npmjs.com/package/loudest): `npm install howler`
 
 In the browser:
 
 ```html
-<script src="/path/to/howler.js"></script>
+<script src="/path/to/loudest.js"></script>
 <script>
     var sound = new Howl({
       src: ['sound.webm', 'sound.mp3']
@@ -83,22 +80,23 @@ In the browser:
 As a dependency:
 
 ```javascript
-import {Howl, Howler} from 'howler';
+import {Howl, Howler} from 'loudest';
 ```
 
 ```javascript
-import "./node_modules/howler/dist/howler.js"; // ES6 without module bundler
+import "./node_modules/loudest/dist/loudest.js"; // ES6 without module bundler
 ```
 
 ```javascript
-const {Howl, Howler} = require('howler');
+const {Howl, Howler} = require('loudest');
 ```
 
 Included distribution files:
 
-* **howler**: This is the default and fully bundled source that includes `howler.core` and `howler.spatial`. It includes all functionality that howler comes with.
-* **howler.core**: This includes only the core functionality that aims to create parity between Web Audio and HTML5 Audio. It doesn't include any of the spatial/stereo audio functionality.
-* **howler.spatial**: This is a plugin that adds spatial/stereo audio functionality. It requires `howler.core` to operate as it is simply an add-on to the core.
+* **loudest**: This is the default and fully bundled source that includes `loudest.core` and `loudest.spatial`. It includes all functionality that howler comes with.
+* **loudest.core**: This includes only the core functionality that aims to create parity between Web Audio and HTML5 Audio. It doesn't include any of the spatial/stereo audio functionality.
+* **loudest.spatial**: This is a plugin that adds spatial/stereo audio functionality. It requires `loudest.core` to operate as it is simply an add-on to the core.
+* **loudest.filters**: This is a plugin that adds spatial/stereo audio functionality. It requires `loudest.core` to operate as it is simply an add-on to the core.
 
 
 ### Examples
@@ -218,7 +216,7 @@ Howler.volume(0.5);
 ```
 
 
-More in-depth examples (with accompanying live demos) can be found in the [examples directory](https://github.com/goldfire/howler.js/tree/master/examples).
+More in-depth examples (with accompanying live demos) can be found in the [examples directory](https://github.com/profispojka/loudest.js/tree/master/examples).
 
 
 ## Core
@@ -575,7 +573,7 @@ ffmpeg -i sound1.wav -dash 1 sound1.webm
 ```
 
 ### Sponsors
-Support the ongoing development of howler.js and get your logo on our README with a link to your site [[become a sponsor](https://github.com/sponsors/goldfire)]. You can also become a backer at a lower tier and get your name in the [BACKERS](https://github.com/goldfire/howler.js/blob/master/BACKERS.md) list. All support is greatly appreciated!
+Support the ongoing development of howler.js and get your logo on our README with a link to your site [[become a sponsor](https://github.com/sponsors/goldfire)]. You can also become a backer at a lower tier and get your name in the [BACKERS](https://github.com/profispojka/loudest.js/blob/master/BACKERS.md) list. All support is greatly appreciated!
 
 [![GoldFire Studios](https://s3.amazonaws.com/howler.js/sponsors/goldfire_studios.png "GoldFire Studios")](https://goldfirestudios.com)
 
@@ -583,4 +581,4 @@ Support the ongoing development of howler.js and get your logo on our README wit
 
 Copyright (c) 2013-2021 [James Simpson](https://twitter.com/GoldFireStudios) and [GoldFire Studios, Inc.](http://goldfirestudios.com)
 
-Released under the [MIT License](https://github.com/goldfire/howler.js/blob/master/LICENSE.md).
+Released under the [MIT License](https://github.com/profispojka/loudest.js/blob/master/LICENSE.md).

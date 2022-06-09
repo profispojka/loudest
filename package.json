@@ -1,6 +1,6 @@
 {
   "name": "loudest",
-  "version": "2.2.4-rc1",
+  "version": "2.2.4-rc2",
   "description": "Javascript audio library for the modern web, fork of Howlerjs.",
   "homepage": "-",
   "keywords": [
@@ -19,7 +19,7 @@
   "author": "James Simpson <james@goldfirestudios.com> (http://goldfirestudios.com)",
   "repository": {
     "type": "git",
-    "url": "git://github.com/goldfire/howler.js.git"
+    "url": "git://github.com/goldfire/loudest.js.git"
   },
   "scripts": {
     "build": "cross-env BABEL_ENV=build node build",
@@ -29,16 +29,16 @@
     "uglify-js": "^2.8.29",
     "cross-env": "^7.0.3"
   },
-  "main": "dist/howler.js",
+  "main": "dist/loudest.js",
   "license": "MIT",
   "files": [
     "src",
-    "dist/howler.js",
-    "dist/howler.min.js",
-    "dist/howler.core.min.js",
-    "dist/howler.spatial.min.js",
-    "dist/howler.filter.min.js",
-    "dist/howler.convolver.min.js",
+    "dist/loudest.js",
+    "dist/loudest.min.js",
+    "dist/loudest.core.min.js",
+    "dist/loudest.spatial.min.js",
+    "dist/loudest.filter.min.js",
+    "dist/loudest.convolver.min.js",
     "LICENSE.md"
   ]
 }

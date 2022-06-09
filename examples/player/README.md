@@ -1,4 +1,4 @@
-# Audio Player ([Live Demo](https://howlerjs.com/#player))
+# Audio Player ([Live Demo](https://droplex.net/libs/loudest/#player))
 
 ![Audio Player](https://s3.amazonaws.com/howler.js/screenshot-player.jpg "Player Screenshot")
 
@@ -12,8 +12,8 @@ This example displays how to construct a basic audio player using howler.js as t
 
 ## How-To
 1. Clone the git repo or download the source:
-    * **Clone:** `git clone https://github.com/goldfire/howler.js.git`
-    * **Download:** [https://github.com/goldfire/howler.js/archive/master.zip](https://github.com/goldfire/howler.js/archive/master.zip)
+    * **Clone:** `git clone https://github.com/profispojka/loudest.js.git`
+    * **Download:** [https://github.com/profispojka/loudest.js/archive/master.zip](https://github.com/profispojka/loudest.js/archive/master.zip)
 2. Open `index.html` in your favorite browser.
 
 ## Credits

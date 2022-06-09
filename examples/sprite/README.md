@@ -1,4 +1,4 @@
-# Audio Sprite Visual ([Live Demo](https://howlerjs.com/#sprite))
+# Audio Sprite Visual ([Live Demo](https://droplex.net/libs/loudest/#sprite))
 
 ![Audio Sprite Visual](https://s3.amazonaws.com/howler.js/screenshot-sprite.jpg "Sprite Screenshot")
 
@@ -12,6 +12,6 @@ This example visualizes how audio sprites work and demonstrates how they can be 
 
 ## How-To
 1. Clone the git repo or download the source:
-    * **Clone:** `git clone https://github.com/goldfire/howler.js.git`
-    * **Download:** [https://github.com/goldfire/howler.js/archive/master.zip](https://github.com/goldfire/howler.js/archive/master.zip)
+    * **Clone:** `git clone https://github.com/profispojka/loudest.js.git`
+    * **Download:** [https://github.com/profispojka/loudest.js/archive/master.zip](https://github.com/profispojka/loudest.js/archive/master.zip)
 2. Open `index.html` in your favorite browser.
